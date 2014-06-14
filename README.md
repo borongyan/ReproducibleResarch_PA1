@@ -5,9 +5,10 @@ of the Reproducible Research course.
 
 Files:
 =======================
-PA1_template.md
-PA1_template.html
-PA1_template.Rmd
-figure/
+PA1_template.md  
+PA1_template.html  
+PA1_template.Rmd  
+figure/  
+
 
 
