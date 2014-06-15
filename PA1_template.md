@@ -216,12 +216,17 @@ plot(df.aggregatedMeanInterval$steps~df.aggregatedMeanInterval$interval,
      main="Average amount of steps per interval", 
      type = "l",
      lwd = 2,
-     xaxt="n")
+     xaxt="n", 
+     col=terrain.colors(2))
 # calculate x axis labels position and its label
 x.time <- chron(times=c("00:00:00","06:00:00","12:00:00","18:00:00","23:55:00"))
 x.label <- c("00:00","06:00","12:00","18:00","23:55")
 # print x axis labels
 axis(1, at=x.time,label=x.label)
+# fill the line plot by drawing polygon
+xx <- c(df.aggregatedMeanInterval$interval, rev(df.aggregatedMeanInterval$interval))
+yy <- c(rep(0, nrow(df.aggregatedMeanInterval)), rev(df.aggregatedMeanInterval$steps))
+polygon(xx, yy, col=terrain.colors(2), border=NA)
 ```
 
 ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
@@ -318,8 +323,17 @@ summary(missing.Entries$entries)
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##     288     288     288     288     288     288
 ```
+Count the unique days in the data.
+
+```r
+length(unique(missing.Entries$date))
+```
+
+```
+## [1] 8
+```
 #### Conclusion
-We can see that we are missing all values for 6 days. Resolving the NAs by the mean/median for that day does not work as all values for that date are missing. So we need to assign the missing values by the mean for that interval.
+We can see that we are missing all values for 8 days. Resolving the NAs by the mean/median for that day does not work as all values for that date are missing. So we need to assign the missing values by the mean for that interval.
 
 ### Create a new dataset that is equal to the original dataset but with the missing data filled in.
 Assign missing values per mean for that interval.
@@ -362,7 +376,7 @@ hist(df.activityFixSum$steps,
      col=terrain.colors(2))
 ```
 
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
 
 ### Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
@@ -415,7 +429,7 @@ nrow(df.diff)
 ```
 We have added 8 days by imputting the missing data.  
 
-Show the impact of impute missing data.
+Show the impact of impute missing data by plotting the aggreagated sum of total steps per day, mean and median steps per interval.
 
 #### Amount of Steps per day
 
@@ -430,21 +444,20 @@ df.aggregatedSumFix$src <- "Impute NAs"
 df.hist <- rbind(df.aggregatedSum,df.aggregatedSumFix)
 names(df.hist) <- c("date","steps","source")
 
-color<-c(df.aggregatedSum$src,df.aggregatedSumFix$src) 
+breaks<-c(df.aggregatedSum$src,df.aggregatedSumFix$src) 
 qplot(steps, 
       data = df.hist, 
       geom="histogram", 
-      colour=factor(color), 
-      fill=factor(color), 
+      fill=breaks, 
       position = position_dodge(), 
       main="Total amount of steps per day", 
       xlab="Steps", 
       ylab="Frequency",
-      binwidth=5000 
-)
+      binwidth=5000,
+) + scale_fill_manual(values=terrain.colors(2))
 ```
 
-![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-23.png) 
+![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24.png) 
 
 #### Average steps per interval
 
@@ -454,21 +467,20 @@ df.aggregatedMeanFix$src <- "Impute NAs"
 df.hist <- rbind(df.aggregatedMean,df.aggregatedMeanFix)
 names(df.hist) <- c("date","steps","source")
 
-color<-c(df.aggregatedMeanFix$src,df.aggregatedMean$src) 
+breaks<-c(df.aggregatedMeanFix$src,df.aggregatedMean$src) 
 qplot(steps, 
       data = df.hist, 
       geom="histogram", 
-      colour=factor(color), 
-      fill=factor(color), 
+      fill=breaks, 
       position = position_dodge(), 
       main="Mean Steps", 
       xlab="Steps", 
       ylab="Frequency",
       binwidth=10 
-)
+) + scale_fill_manual(values=terrain.colors(2))
 ```
 
-![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24.png) 
+![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-25.png) 
 
 #### Median steps per interval
 
@@ -478,21 +490,20 @@ df.aggregatedMedianFix$src <- "Impute NAs"
 df.hist <- rbind(df.aggregatedMedian,df.aggregatedMedianFix)
 names(df.hist) <- c("date","steps","source")
 
-color<-c(df.aggregatedMedianFix$src,df.aggregatedMedian$src) 
+breaks<-c(df.aggregatedMedianFix$src,df.aggregatedMedian$src) 
 qplot(steps, 
       data = df.hist, 
       geom="histogram", 
-      colour=factor(color), 
-      fill=factor(color), 
+      fill=breaks, 
       position = position_dodge(), 
       main="Median Steps", 
       xlab="Steps", 
       ylab="Frequency",
       binwidth=10 
-)
+) + scale_fill_manual(values=terrain.colors(2))
 ```
 
-![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-25.png) 
+![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26.png) 
 
 ## 5. Are there differences in activity patterns between weekdays and weekends?
 For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
@@ -583,9 +594,14 @@ plot(df.weekdayInterval$steps~df.weekdayInterval$interval,
     main="Average number of steps (weekdays)", 
     type = "l",
     lwd = 2,
-    xaxt="n")
+    xaxt="n",
+    col=terrain.colors(2))
 # print x axis labels
 axis(1, at=x.time,label=x.label)
+# fill the line plot by drawing polygon
+xx <- c(df.weekdayInterval$interval, rev(df.weekdayInterval$interval))
+yy <- c(rep(0, nrow(df.weekdayInterval)), rev(df.weekdayInterval$steps))
+polygon(xx, yy, col=terrain.colors(2), border=NA)
 
 plot(df.weekendInterval$steps~df.weekendInterval$interval, 
      xlab="Interval",
@@ -593,11 +609,16 @@ plot(df.weekendInterval$steps~df.weekendInterval$interval,
      main="Average number of steps (weekend)", 
      type = "l",
      lwd = 2,
-     xaxt="n")
+     xaxt="n",
+     col=terrain.colors(2))
 # print x axis labels
 axis(1, at=x.time,label=x.label)
+# fill the line plot by drawing polygon
+xx <- c(df.weekendInterval$interval, rev(df.weekendInterval$interval))
+yy <- c(rep(0, nrow(df.weekendInterval)), rev(df.weekendInterval$steps))
+polygon(xx, yy, col=terrain.colors(2), border=NA)
 ```
 
-![plot of chunk unnamed-chunk-31](figure/unnamed-chunk-31.png) 
+![plot of chunk unnamed-chunk-32](figure/unnamed-chunk-32.png) 
 
 
